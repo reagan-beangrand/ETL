@@ -71,7 +71,7 @@ class Program
                 var extractedData = ExtractKeyValuePairsFromText(pdfPath);
                 Log($"[INFO] Extracted {extractedData.Count} key-value pairs.");
 
-                var success = true;//await SubmitToGoogleForm(formPostUrl, fieldMap, extractedData);
+                var success = await SubmitToGoogleForm(formPostUrl, fieldMap, extractedData);
                 string destinationFolder = success ? processedFolder : errorFolder;
                 string status = success ? "Success" : "Failed";
                 string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseSystem\\LicenseSystem.csproj": {}
+    "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseSystem\\LicenseSystem.csproj": {}
   },
   "projects": {
-    "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseSystem\\LicenseSystem.csproj": {
+    "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseSystem\\LicenseSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseSystem\\LicenseSystem.csproj",
+        "projectUniqueName": "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseSystem\\LicenseSystem.csproj",
         "projectName": "LicenseSystem",
-        "projectPath": "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseSystem\\LicenseSystem.csproj",
+        "projectPath": "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseSystem\\LicenseSystem.csproj",
         "packagesPath": "C:\\Users\\RENIRENZO\\.nuget\\packages\\",
-        "outputPath": "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseSystem\\obj\\",
+        "outputPath": "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseSystem\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\RENIRENZO\\AppData\\Roaming\\NuGet\\NuGet.Config"
