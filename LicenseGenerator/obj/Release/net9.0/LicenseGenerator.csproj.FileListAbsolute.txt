@@ -1,6 +1,7 @@
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\bin\Release\net9.0\LicenseGenerator.exe
-c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\bin\Release\net9.0\LicenseGenerator.deps.json
-c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\bin\Release\net9.0\LicenseGenerator.runtimeconfig.json
+c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\bin\Release\net9.0\config.json
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\bin\Release\net9.0\LicenseGenerator.deps.json
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\bin\Release\net9.0\LicenseGenerator.runtimeconfig.json
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\bin\Release\net9.0\LicenseGenerator.dll
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\bin\Release\net9.0\LicenseGenerator.pdb
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\bin\Release\net9.0\BouncyCastle.Cryptography.dll
@@ -23,9 +24,9 @@ c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\obj\Release\net9.0\L
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\obj\Release\net9.0\LicenseGenerator.AssemblyInfo.cs
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\obj\Release\net9.0\LicenseGenerator.csproj.CoreCompileInputs.cache
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\obj\Release\net9.0\LicenseGenerator.sourcelink.json
-c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\obj\Release\net9.0\LicenseG.97897944.Up2Date
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\obj\Release\net9.0\LicenseG.97897944.Up2Date
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\obj\Release\net9.0\LicenseGenerator.dll
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\obj\Release\net9.0\refint\LicenseGenerator.dll
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\obj\Release\net9.0\LicenseGenerator.pdb
-c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\obj\Release\net9.0\LicenseGenerator.genruntimeconfig.cache
-c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\obj\Release\net9.0\ref\LicenseGenerator.dll
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\obj\Release\net9.0\LicenseGenerator.genruntimeconfig.cache
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseGenerator\obj\Release\net9.0\ref\LicenseGenerator.dll

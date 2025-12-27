@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LicenseGenerator")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+885da2a17f74bde3901b74e278e55ff43074eeb5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c3a474998acbd39c31c21604ba2b4bf103f9a3cc")]
 [assembly: System.Reflection.AssemblyProductAttribute("LicenseGenerator")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LicenseGenerator")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -759,11 +759,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseGenerator\\LicenseGenerator.csproj",
+      "projectUniqueName": "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseGenerator\\LicenseGenerator.csproj",
       "projectName": "LicenseGenerator",
-      "projectPath": "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseGenerator\\LicenseGenerator.csproj",
+      "projectPath": "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseGenerator\\LicenseGenerator.csproj",
       "packagesPath": "C:\\Users\\RENIRENZO\\.nuget\\packages\\",
-      "outputPath": "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseGenerator\\obj\\",
+      "outputPath": "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseGenerator\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\RENIRENZO\\AppData\\Roaming\\NuGet\\NuGet.Config"

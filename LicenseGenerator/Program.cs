@@ -10,66 +10,70 @@ using DeviceId.Windows;
 using DeviceId.Formatters;
 using Standard.Licensing;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.Json;
 
 namespace LicenseGenerator
 {    class Program
     {
+        private static string privateKeyPath;
         static void Main(string[] args)
         {
-           
-            // Get MAC address of first active network adapter
-            //string macAddress = "0A-00-27-00-00-04";
-            //Console.WriteLine("MAC Address: " + macAddress);
+            try
+            {
+                Console.WriteLine("License file generation started!");
+                DateTime expiryDate = DateTime.UtcNow.Date.AddDays(15);
+                string deviceIdentifier = GetDeviceId();
+                string privateKey="";
+                string customerName = "Mohan";string passPhrase="BatchProcessor";
+                 if (!File.Exists(privateKeyPath))
+                     Console.WriteLine("PrivateKey file not found.");
+                 else      
+                     privateKey = File.ReadAllText(privateKeyPath);
+                
 
-
-            /* string privateKey = File.ReadAllText("C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseGenerator\\mastermohan292@gmail.com_privateKey.txt");
-            DateTime expiryDate = DateTime.UtcNow.Date.AddDays(30);
-            string deviceIdentifier = GetDeviceId();string passPhrase="HJpb&JINR^jg&zeI";
-            License newLicense = License.New()
+                License newLicense = License.New()
                 .WithUniqueIdentifier(Guid.NewGuid())
+                .As(LicenseType.Trial)
                 .ExpiresAt(expiryDate)
                 .WithAdditionalAttributes(new Dictionary<string, string>
                 {
                     { "DeviceIdentifier", deviceIdentifier }
                 })
-                .LicensedTo("Mohan","mastermohan292@gmail.com")
-                .CreateAndSignWithPrivateKey(privateKey, passPhrase);
-          
-            // Save license to XML file           
-            File.WriteAllText("license.xml", newLicense.ToString());            
-            Console.WriteLine("License generated successfully!");      */   
-            Console.WriteLine("License file generation started!");
-            DateTime expiryDate = DateTime.UtcNow.Date.AddDays(15);
-            string deviceIdentifier = GetDeviceId();
-            string customerName = "Mohan";string passPhrase="BatchProcessor";
-            string privateKey = File.ReadAllText("C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseGenerator\\mastermohan292@gmail.com_privateKey.txt");            
-            License newLicense = License.New()
-            .WithUniqueIdentifier(Guid.NewGuid())
-            .As(LicenseType.Trial)
-            .ExpiresAt(expiryDate)
-            .WithAdditionalAttributes(new Dictionary<string, string>
-            {
-                { "DeviceIdentifier", deviceIdentifier }
-            })
-            .LicensedTo((c) => c.Name = customerName)            
-            .CreateAndSignWithPrivateKey(privateKey, passPhrase);                
-            string licenseKey = Base64UrlEncoder.Encode(newLicense.ToString());
+                .LicensedTo((c) => c.Name = customerName)            
+                .CreateAndSignWithPrivateKey(privateKey, passPhrase);                
+                string licenseKey = Base64UrlEncoder.Encode(newLicense.ToString());
 
-            Console.WriteLine(licenseKey);
-            File.WriteAllText($"license.txt", licenseKey);
-            Console.WriteLine("License file generated successfully!");    
+                Console.WriteLine(licenseKey);
+                File.WriteAllText($"license.txt", licenseKey);
+                Console.WriteLine("License file generated successfully!");  
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }             
+              
         }        
         static string GetDeviceId()
         {
-            return new DeviceIdBuilder()
-                                .AddMachineName()
-                                .AddOsVersion()
-                                .OnWindows(windows => windows
-                                    .AddProcessorId()
-                                    .AddMotherboardSerialNumber()
-                                    .AddSystemDriveSerialNumber())
-                                .ToString();
-        }
+            string json = File.ReadAllText("config.json");
+            string deviceIdPath;string deviceId="";
+            using var doc = JsonDocument.Parse(json);
 
+            if (doc.RootElement.TryGetProperty("DeviceId", out var key))
+            {
+                deviceIdPath = key.GetString()+"\\device_Id.txt";
+                if (!File.Exists(deviceIdPath))
+                    Console.WriteLine("DeviceId file not found.");
+                else      
+                    deviceId = File.ReadAllText(deviceIdPath); 
+            }
+            else
+                Console.WriteLine("DeviceId path not found in config.json");
+
+            if (doc.RootElement.TryGetProperty("PrivateKey", out var privateKeyValue))
+                privateKeyPath = privateKeyValue.GetString();
+
+            return deviceId;
+        }
     }
 }

@@ -1,4 +1,4 @@
-c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\bin\Debug\net9.0\LicenseSystem.deps.json
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\bin\Debug\net9.0\LicenseSystem.deps.json
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\bin\Debug\net9.0\LicenseSystem.dll
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\bin\Debug\net9.0\LicenseSystem.pdb
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\LicenseSystem.csproj.AssemblyReference.cache
@@ -10,4 +10,4 @@ c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\Licens
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\LicenseSystem.dll
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\refint\LicenseSystem.dll
 c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\LicenseSystem.pdb
-c:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\ref\LicenseSystem.dll
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\ref\LicenseSystem.dll

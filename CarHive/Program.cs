@@ -33,6 +33,7 @@ class Program
     = new List<(string, string, string, string)>(); 
     static async Task Main(string[] args)
     {
+        Console.WriteLine("=== Car Hive PDF Processor Started ===");
         LoadConfig("config.json");
 
         if (!ValidateLicense(licenseKeyFolderPath))
@@ -126,6 +127,7 @@ class Program
             }
 
         }
+         Console.WriteLine("=== Car Hive PDF Processor Completed ===");
     }
 
     static void LoadConfig(string configPath)
@@ -172,7 +174,7 @@ class Program
     static bool ValidateLicense(string keyfolderPath)
     { 
         var licenseKeyPath =$"{keyfolderPath}\\license.txt";        
-        string publicKey = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEMeRFHO2R3j5Uyjb/6byvMYP6slojMU3MseCrsQiO8FC9DCl4DJmKPCRylp+jmknbey1B3JvbFEBXtAB6hsTgUg=="; 
+        string publicKey = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAED8bkFa/MaW5NsKlLj0tejVpWdT36x/P90f94Fk4TA4hBcbZYewp9pTm8aSK1wzU73/5fQ/urws/yakYUFIyrkw=="; 
         bool isValidLicense = true; License loadedLicense;      
         if (!File.Exists(licenseKeyPath))
         {
@@ -244,7 +246,7 @@ class Program
         {
             foreach (Page page in document.GetPages())
             {
-                Console.WriteLine($"Page {page.Number}:");
+                //Console.WriteLine($"Page {page.Number}:");
                 //Console.WriteLine(page.Text.TrimStart());
                 result = page.Text.TrimStart();
             }
@@ -322,19 +324,7 @@ class Program
         int index = inputText.IndexOf(marker);
         string beforeText = "";
         if (index != -1)
-        {
-            // Text before Seller / Owner Name
             beforeText = inputText.Substring(0, index).Trim();
-
-            // Text after Seller / Owner Name
-            //string afterText = inputText.Substring(index).Trim();
-
-            //Console.WriteLine("Before Seller / Owner Name:");
-            //Console.WriteLine(beforeText);
-            //Console.WriteLine();
-            //Console.WriteLine("After Seller / Owner Name:");
-            //Console.WriteLine(afterText);
-        }
         else
         {
             Log($"[ERROR] Marker not found in text: {marker}");
