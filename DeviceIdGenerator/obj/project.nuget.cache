@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "dgSpecHash": "dTmlBOuJOfI=",
+  "success": true,
+  "projectFilePath": "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\DeviceIdGenerator\\DeviceIdGenerator.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\RENIRENZO\\.nuget\\packages\\deviceid\\6.9.0\\deviceid.6.9.0.nupkg.sha512",
+    "C:\\Users\\RENIRENZO\\.nuget\\packages\\deviceid.windows\\6.9.0\\deviceid.windows.6.9.0.nupkg.sha512",
+    "C:\\Users\\RENIRENZO\\.nuget\\packages\\deviceid.windows.wmi\\6.9.0\\deviceid.windows.wmi.6.9.0.nupkg.sha512",
+    "C:\\Users\\RENIRENZO\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
+    "C:\\Users\\RENIRENZO\\.nuget\\packages\\microsoft.win32.registry\\5.0.0\\microsoft.win32.registry.5.0.0.nupkg.sha512",
+    "C:\\Users\\RENIRENZO\\.nuget\\packages\\system.codedom\\9.0.3\\system.codedom.9.0.3.nupkg.sha512",
+    "C:\\Users\\RENIRENZO\\.nuget\\packages\\system.management\\9.0.3\\system.management.9.0.3.nupkg.sha512",
+    "C:\\Users\\RENIRENZO\\.nuget\\packages\\system.security.accesscontrol\\5.0.0\\system.security.accesscontrol.5.0.0.nupkg.sha512",
+    "C:\\Users\\RENIRENZO\\.nuget\\packages\\system.security.principal.windows\\5.0.0\\system.security.principal.windows.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

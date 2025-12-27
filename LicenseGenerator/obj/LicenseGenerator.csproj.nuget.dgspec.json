@@ -44,9 +44,21 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
-            "Newtonsoft.Json": {
+            "DeviceId": {
               "target": "Package",
-              "version": "[13.0.4, )"
+              "version": "[6.9.0, )"
+            },
+            "DeviceId.Windows": {
+              "target": "Package",
+              "version": "[6.9.0, )"
+            },
+            "DeviceId.Windows.WmiLight": {
+              "target": "Package",
+              "version": "[6.9.0, )"
+            },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[8.15.0, )"
             },
             "Standard.Licensing": {
               "target": "Package",

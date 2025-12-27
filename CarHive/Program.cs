@@ -5,12 +5,14 @@ using System.Net.NetworkInformation;
 using System.Text.Json;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Content;
-using HtmlAgilityPack;
+using System.Xml;
 using System.Text.RegularExpressions;
 using CarHive.Parser;
 using CarHive.Entity;
 using Standard.Licensing;
 using Standard.Licensing.Validation;
+using DeviceId;
+using Microsoft.IdentityModel.Tokens;
 
 class Program
 {
@@ -35,7 +37,7 @@ class Program
 
         if (!ValidateLicense(licenseKeyFolderPath))
         {
-            Log("[ERROR] Invalid license key or machine binding mismatch. Unauthorized installation.");
+            //Log("[ERROR] Invalid license key or machine binding mismatch. Unauthorized installation.");
             return;
         }
 
@@ -169,93 +171,51 @@ class Program
 
     static bool ValidateLicense(string keyfolderPath)
     { 
-        var licenseFile =$"{keyfolderPath}/license.xml";
-        var publicKeyFile = $"{keyfolderPath}/publicKey.txt";
-        string licenseText = "";string publicKey = "";
-        bool isValidLicense = true;       
-        if (!File.Exists(licenseFile))
+        var licenseKeyPath =$"{keyfolderPath}\\license.txt";        
+        string publicKey = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEMeRFHO2R3j5Uyjb/6byvMYP6slojMU3MseCrsQiO8FC9DCl4DJmKPCRylp+jmknbey1B3JvbFEBXtAB6hsTgUg=="; 
+        bool isValidLicense = true; License loadedLicense;      
+        if (!File.Exists(licenseKeyPath))
         {
-                Console.WriteLine("License file not found.");
-                return false;
+            Log("[ERROR] License file not found.");
+            Console.WriteLine("License file not found.");
+            return false;
         }
         else
-            licenseText = File.ReadAllText(licenseFile);
-
-        if (!File.Exists(publicKeyFile))
         {
-                Console.WriteLine("Public key file not found.");
-                return false;
+            string licenseKey = File.ReadAllText(licenseKeyPath);        
+            loadedLicense = License.Load(Base64UrlEncoder.Decode(licenseKey));            
         }
-        else
-            publicKey = File.ReadAllText(publicKeyFile);
-       
-        //var license = License.Load($"{keyfolderPath}/License.lic");
-        // Read license back from file
-        
-        var loadedLicense = License.Load(licenseText);
-
-        // Get stored MAC address from license
-        string licensedMac = loadedLicense.AdditionalAttributes.Get("MAC");
-        Console.WriteLine("Licensed MAC: " + licensedMac);
-
-        // Get current machine MAC
-        string currentMac = GetLocalMacAddress();
-        Console.WriteLine("Current MAC: " + currentMac);
+        // Get stored Device Identifier from license
+        string licensedDeviceId = loadedLicense.AdditionalAttributes.Get("DeviceIdentifier");
+        // Get current machine Device Identifier
+        string currentDeviceId = GetDeviceId();        
         // Validation check
-        if (licensedMac == currentMac)
+        var validationFailures = loadedLicense.Validate()
+                                .ExpirationDate()                           
+                                .When(lic => lic.Type == LicenseType.Trial)
+                                .And()
+                                .Signature(publicKey)
+                                .And()
+                                .AssertThat(lic => // Check Device Identifier matches.
+                                lic.AdditionalAttributes.Get("DeviceIdentifier") == currentDeviceId,
+                                new GeneralValidationFailure()
+                                {
+                                    Message      = "Invalid Device.",
+                                    HowToResolve = "Contact the supplier to obtain a new license key."
+                                })
+                                .AssertValidLicense()
+                                .ToList();
+                        
+        if (validationFailures.Any())
         {
-            var validationFailures = loadedLicense.Validate()  
-                                .ExpirationDate(systemDateTime: DateTime.Now)  
-                                .When(lic => lic.Type == LicenseType.Trial)                                
-                                .And()  
-                                .Signature(publicKey)  
-                                .AssertValidLicense();
-            if(validationFailures.Count()>0)
-                isValidLicense = false;
+             isValidLicense = false;
             foreach (var failure in validationFailures)
             {
-                Log(failure.GetType().Name + ": " + failure.Message + " - " + failure.HowToResolve);
+                Log($"[ERROR] {failure.GetType().Name}: {failure.Message} - {failure.HowToResolve}");
                 Console.WriteLine(failure.GetType().Name + ": " + failure.Message + " - " + failure.HowToResolve);
-            }
-            // if (loadedLicense.Expiration > DateTime.Now)
-            // {
-            //     Console.WriteLine("✅ License is valid and bound to this machine.");
-            // }
-            // else
-            // {
-            //     Console.WriteLine("⚠️ License has expired.");
-            // }
+            }             
         }
-        else
-        {
-            isValidLicense = false;
-            Log("❌ License is not valid for this machine.");
-            Console.WriteLine("❌ License is not valid for this machine.");
-        }
-
-
-        
-        return isValidLicense;
-        //string publicKey = File.ReadAllText($"{keyfolderPath}/publicKey.xml");
-        //string publicKey = File.ReadAllText($"{keyfolderPath}/public.pem");
-        //var manager = new LicenseSystem.LicenseManager($"{keyfolderPath}/license.json", publicKey);
-        //return manager.ValidateLicense();
-        // if (manager.ValidateLicense())
-        // {
-        //     Console.WriteLine("License valid. Application starting...");
-        //     // Run your app logic
-        // }
-        // else
-        // {
-        //     Console.WriteLine("License invalid. Exiting...");
-        //     Environment.Exit(1);
-        // }
-        // return true;
-        // string localMachineId = GetLocalMacAddress();
-        // Log($"[INFO] Local Machine ID: {localMachineId}");
-
-        // return string.Equals(enteredKey, validLicenseKey, StringComparison.OrdinalIgnoreCase)
-        //        && string.Equals(localMachineId, validMachineId, StringComparison.OrdinalIgnoreCase);
+        return isValidLicense;       
     }
 
     static string GetLocalMacAddress()
@@ -306,28 +266,16 @@ class Program
                                      "Warranty Status","Feature Highlights","Car Accessories","Fuel Efficiency (km/l)",
                                      "Tyre Condition","Interior Condition","Exterior Condition","Road Tax Paid",
                                      "Loan Status","Asking Price (₹)","Negotiable (Yes/No)","Description"};
-        //var data = new Dictionary<string, string>();
-        // Split text into lines
-        //string[] lines = textContent.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-        //Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+        
         Dictionary<string, string> extractedValues = new Dictionary<string, string>();
-        extractedValues["User Name"]="mohan";
-        //extractedValues["Email"]="Mastermohan292@gmail.com";
+        extractedValues["User Name"]=userName;        
         try
         {
             string textContent = ExtractTextFromPdf(pdfPath);            
             var parser = new CarInfoParser();
             CarInfo car = parser.Parse(textContent);
-            //Console.WriteLine($"Mileage: {car.Mileage}");
-            
             string generalRegEx = @":\s*(.+)";
-            // string transmissionRegEx = @"Transmission \(Manual/Automatic\):\s*(\w+)";
-            // string MileageRegEx = @"Mileage \(km\):\s*(\d+)";
-            // string EngineCapRegEx = @"Engine Capacity \(cc\):\s*(\d+)";
-            // string NegotiableRegEx = @"Negotiable \(Yes/No\):\s*(\w+)";
-            // string fuelEfficiencyRegEx = @"Fuel Efficiency \(km/l\):\s*([\d.]+)";            
-            // string askingPriceRegEx = @"Asking Price \(₹\):\s*([\d,]+)";
-            //string fuelEfficiencyRegEx = @"Fuel Efficiency \(km/l\):\s*([\d\.]+)\s*km/l";
+            
             int keysCount = keysToExtract.Length;
             for (int i = 0; i < keysCount; i++)
             {
@@ -354,24 +302,7 @@ class Program
                     else                
                         extractedValues[keysToExtract[i]]= GetKeyValue(extractedValue, $"{keysToExtract[i+1]}:");
                 }  
-            }
-            /*foreach (var key in keysToExtract)
-            {
-                string pattern = key + @":\s*(.+)";
-                Match match = Regex.Match(textContent, pattern);
-                if (match.Success)
-                {
-                    var extractedValue = match.Groups[1].Value.Trim();                    
-                    if (string.Equals(key, keysToExtract[0],StringComparison.InvariantCultureIgnoreCase))
-                        data[key]= GetKeyValue(extractedValue, $"{keysToExtract[1]}:");
-                    if (string.Equals(key, keysToExtract[1],StringComparison.InvariantCultureIgnoreCase))
-                        data[key]= GetKeyValue(extractedValue, $"{keysToExtract[2]}:");
-                    if (string.Equals(key, keysToExtract[2],StringComparison.InvariantCultureIgnoreCase))
-                        data[key]= GetKeyValue(extractedValue, $"{keysToExtract[3]}:");
-                    if (string.Equals(key, keysToExtract[3],StringComparison.InvariantCultureIgnoreCase))
-                        data[key]= GetKeyValue(extractedValue, $"{keysToExtract[4]}:");
-                }
-            }*/
+            }            
             //Print results
             foreach (var kvp in extractedValues)
             {
@@ -411,47 +342,7 @@ class Program
         }
         return beforeText;
     }
-
-    static Dictionary<string, string> ExtractKeyValuePairs(string pdfPath)
-    {
-        var data = new Dictionary<string, string>();
-        try
-        {
-            using (var document = PdfDocument.Open(pdfPath))
-            {
-                foreach (Page page in document.GetPages())
-                {
-                    /*Console.WriteLine($"Page {page.Number}:");
-                    Console.WriteLine(page.Text.Trim());
-                    
-                    // Get individual words with positions
-                    foreach (var word in page.GetWords())
-                    {
-                        Console.WriteLine($"Word: '{word.Text}' at {word.BoundingBox}");
-                    }
-                    string text = ContentOrderTextExtractor.GetText(page).Trim();
-                    IEnumerable<Word> words = page.GetWords(NearestNeighbourWordExtractor.Instance);
-                    */
-                    var lines = page.Text.Trim().Split('\n');
-                    foreach (var line in lines)
-                    {
-                        if (line.Contains(":"))
-                        {
-                            var parts = line.Split(new[] { ':' }, 2);
-                            if (parts.Length == 2)
-                                data[parts[0].Trim()] = parts[1].Trim();
-                        }
-                    }
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Log($"[ERROR] Failed to read PDF {Path.GetFileName(pdfPath)}: {ex.Message}");
-        }
-        return data;
-    }
-
+  
     static async Task<Dictionary<string, string>> GetGoogleFormFields(string formUrl)
     {
         var googleFormsToolkitLibrary = new GoogleFormsToolkitLibrary.GoogleFormsToolkitLibrary();
@@ -522,11 +413,11 @@ class Program
                         Log($"[DATA] {kvp.Key}: {extractedData[kvp.Key]}");
                     }
                 }
-                formData["emailAddress"] = "Mastermohan292@gmail.com";
+                formData["emailAddress"] = email;
                 foreach (var kvp in formData)
                 {
                     Log($"{kvp.Key} -> {kvp.Value}");
-                    Console.WriteLine($"{kvp.Key} -> {kvp.Value}");
+                    //Console.WriteLine($"{kvp.Key} -> {kvp.Value}");
                 }
 
                 var content = new FormUrlEncodedContent(formData);
@@ -546,7 +437,21 @@ class Program
     static void Log(string message)
     {
         string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {message}";
-        Console.WriteLine(logEntry);
-        File.AppendAllText(logFileFolderPath + logFileName, logEntry + Environment.NewLine);
+        //Console.WriteLine(logEntry);
+        File.AppendAllText($"{logFileFolderPath}\\{logFileName}", logEntry + Environment.NewLine);
+    }
+
+    static string GetDeviceId()
+    {
+        string deviceId = new DeviceIdBuilder()
+                            .AddMachineName()
+                            .AddOsVersion()
+                            .OnWindows(windows => windows
+                                .AddProcessorId()
+                                .AddMotherboardSerialNumber()
+                                .AddSystemDriveSerialNumber())
+                            .ToString();
+
+        return deviceId;           
     }
 }

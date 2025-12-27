@@ -44,6 +44,14 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "DeviceId.Windows.Wmi": {
+              "target": "Package",
+              "version": "[6.9.0, )"
+            },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[8.15.0, )"
+            },
             "Standard.Licensing": {
               "target": "Package",
               "version": "[1.2.1, )"

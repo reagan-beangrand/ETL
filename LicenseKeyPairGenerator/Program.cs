@@ -1,18 +1,35 @@
-﻿// See https://aka.ms/new-console-template for more information
-//using System.Security.Cryptography;
-
-
-// using var rsa = new RSACryptoServiceProvider(2048);
-// string privateKey = rsa.ToXmlString(true);  // keep secret
-// string publicKey = rsa.ToXmlString(false); // embed in app
-// File.WriteAllText("privateKey.xml", privateKey);
-// File.WriteAllText("publicKey.xml", publicKey);
-// Console.WriteLine("Private and public keys generated successfully!");
+﻿
+using DeviceId;
+using LicenseKeyPairGenerator;
 
 var keyGenerator = Standard.Licensing.Security.Cryptography.KeyGenerator.Create(); 
-var keyPair = keyGenerator.GenerateKeyPair(); 
-var privateKey = keyPair.ToEncryptedPrivateKeyString("0A-00-27-00-00-04");  
+var keyPair = keyGenerator.GenerateKeyPair();
+string passPhrase = "BatchProcessor";string customerEmail="mastermohan292@gmail.com";
+var privateKey = keyPair.ToEncryptedPrivateKeyString(passPhrase);  
 var publicKey = keyPair.ToPublicKeyString();
-File.WriteAllText("privateKey.txt", privateKey);
-File.WriteAllText("publicKey.txt", publicKey);
+File.WriteAllText($"{customerEmail}_privateKey.txt", privateKey);
+File.WriteAllText($"{customerEmail}_publicKey.txt", publicKey);
 Console.WriteLine("Private and public keys generated successfully!");
+
+//KeyCreation keyCreation = new KeyCreation();
+//keyCreation.KeyPairGenerator();
+
+//LicenseCreation licenseCreation = new LicenseCreation();
+//licenseCreation.CreateLicense(GetDeviceId());
+
+//VerifyLicense verifyLicense = new VerifyLicense();
+//verifyLicense.VerifyLicenseFile(GetDeviceId());
+
+ /*  static string GetDeviceId()
+        {
+            string deviceId = new DeviceIdBuilder()
+                                .AddMachineName()
+                                .AddOsVersion()
+                                .OnWindows(windows => windows
+                                    .AddProcessorId()
+                                    .AddMotherboardSerialNumber()
+                                    .AddSystemDriveSerialNumber())
+                                .ToString();
+
+            return deviceId;           
+        } */

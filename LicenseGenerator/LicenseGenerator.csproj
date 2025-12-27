@@ -8,7 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="DeviceId" Version="6.9.0" />
+    <PackageReference Include="DeviceId.Windows" Version="6.9.0" />
+    <PackageReference Include="DeviceId.Windows.WmiLight" Version="6.9.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.15.0" />
     <PackageReference Include="Standard.Licensing" Version="1.2.1" />
   </ItemGroup>
 

@@ -1,7 +1,7 @@
 <Solution>   
    <Project Path="CarHive/CarHive.csproj" />
+   <Project Path="DeviceIdGenerator/DeviceIdGenerator.csproj" />
    <Project Path="GoogleFormsToolkitLibrary/GoogleFormsToolkitLibrary.csproj" />
    <Project Path="LicenseGenerator/LicenseGenerator.csproj" />
-   <Project Path="LicenseKeyPairGenerator/LicenseKeyPairGenerator.csproj" />
-   <Project Path="LicenseSystem/LicenseSystem.csproj" />  
+   <Project Path="LicenseKeyPairGenerator/LicenseKeyPairGenerator.csproj" />  
 </Solution>

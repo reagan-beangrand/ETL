@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DeviceId.Windows.Wmi" Version="6.9.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.15.0" />
     <PackageReference Include="Standard.Licensing" Version="1.2.1" />
   </ItemGroup>
 
