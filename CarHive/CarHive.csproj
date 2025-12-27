@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>    
+        
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+     <None Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+     <PackageReference Include="PdfPig" Version="0.1.8" />
+     <PackageReference Include="Standard.Licensing" Version="1.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GoogleFormsToolkitLibrary\GoogleFormsToolkitLibrary.csproj" />
+    <ProjectReference Include="..\LicenseSystem\LicenseSystem.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Entity\" />
+    <Folder Include="License\" />
+    <Folder Include="Parser\" />
+  </ItemGroup>
+</Project>

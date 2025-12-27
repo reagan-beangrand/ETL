@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "PzPwWmOeq3E=",
+  "success": true,
+  "projectFilePath": "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseGenerator\\LicenseGenerator.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\RENIRENZO\\.nuget\\packages\\bouncycastle.cryptography\\2.4.0\\bouncycastle.cryptography.2.4.0.nupkg.sha512",
+    "C:\\Users\\RENIRENZO\\.nuget\\packages\\newtonsoft.json\\13.0.4\\newtonsoft.json.13.0.4.nupkg.sha512",
+    "C:\\Users\\RENIRENZO\\.nuget\\packages\\standard.licensing\\1.2.1\\standard.licensing.1.2.1.nupkg.sha512"
+  ],
+  "logs": []
+}

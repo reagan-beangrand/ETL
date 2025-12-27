@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Udara Alwis</Authors>
+    <Company>Udara Alwis</Company>
+    <Description>A .Net toolkit library for accessing Google Forms pages programmatically.</Description>
+    <Copyright>Udara Alwis</Copyright>
+    <PackageProjectUrl>https://github.com/UdaraAlwis/GoogleFormsToolkitLibrary</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/UdaraAlwis/GoogleFormsToolkitLibrary</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Google Forms, Toolkit, Dot Net</PackageTags>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>    
+    <PackageIconUrl />
+    <Version>1.0.2</Version>
+    <PackageReleaseNotes>[1.0.0]
+Initial Release
+[1.0.1]
+Added Submit form data method
+[1.0.2]
+Fixing the Form Submit function</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.16" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+  
+</Project>

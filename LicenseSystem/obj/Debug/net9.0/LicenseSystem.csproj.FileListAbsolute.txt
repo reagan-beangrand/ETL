@@ -1,0 +1,12 @@
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\bin\Debug\net9.0\LicenseSystem.deps.json
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\bin\Debug\net9.0\LicenseSystem.dll
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\bin\Debug\net9.0\LicenseSystem.pdb
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\LicenseSystem.csproj.AssemblyReference.cache
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\LicenseSystem.GeneratedMSBuildEditorConfig.editorconfig
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\LicenseSystem.AssemblyInfoInputs.cache
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\LicenseSystem.AssemblyInfo.cs
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\LicenseSystem.csproj.CoreCompileInputs.cache
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\LicenseSystem.dll
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\refint\LicenseSystem.dll
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\LicenseSystem.pdb
+C:\Personal\Reagan\Work\Projects\Mohan\ETL\LicenseSystem\obj\Debug\net9.0\ref\LicenseSystem.dll
