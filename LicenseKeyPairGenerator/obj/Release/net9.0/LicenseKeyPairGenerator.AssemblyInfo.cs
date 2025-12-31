@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LicenseKeyPairGenerator")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bac28cc873466f4c965dc81785e5cf6511046c21")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d8e598b40bcbc05b5f742e9ebd3ab8523a5dcd32")]
 [assembly: System.Reflection.AssemblyProductAttribute("LicenseKeyPairGenerator")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LicenseKeyPairGenerator")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

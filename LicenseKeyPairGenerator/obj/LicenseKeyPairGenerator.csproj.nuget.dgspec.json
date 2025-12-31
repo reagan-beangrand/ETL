@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseKeyPairGenerator\\LicenseKeyPairGenerator.csproj": {}
+    "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseKeyPairGenerator\\LicenseKeyPairGenerator.csproj": {}
   },
   "projects": {
-    "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseKeyPairGenerator\\LicenseKeyPairGenerator.csproj": {
+    "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseKeyPairGenerator\\LicenseKeyPairGenerator.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseKeyPairGenerator\\LicenseKeyPairGenerator.csproj",
+        "projectUniqueName": "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseKeyPairGenerator\\LicenseKeyPairGenerator.csproj",
         "projectName": "LicenseKeyPairGenerator",
-        "projectPath": "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseKeyPairGenerator\\LicenseKeyPairGenerator.csproj",
+        "projectPath": "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseKeyPairGenerator\\LicenseKeyPairGenerator.csproj",
         "packagesPath": "C:\\Users\\RENIRENZO\\.nuget\\packages\\",
-        "outputPath": "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseKeyPairGenerator\\obj\\",
+        "outputPath": "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseKeyPairGenerator\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\RENIRENZO\\AppData\\Roaming\\NuGet\\NuGet.Config"

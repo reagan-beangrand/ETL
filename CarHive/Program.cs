@@ -16,25 +16,42 @@ using Microsoft.IdentityModel.Tokens;
 
 class Program
 {
-    private static readonly string logFileName = "process.log";
+    //private static readonly string logFileName = "process.log";
 
     // Config values
     private static string licenseKeyFolderPath;
+    private static string logFilePath;
+
     private static string processedFolder;
     private static string errorFolder;
     private static string folderPath;
     private static string formUrl;
     private static string formPostUrl;
     private static string summaryFile;
-    private static string logFileFolderPath;
+    //private static string logFileFolderPath;
     private static string userName;
     private static string email;
-    private static List<(string FileName, string Status, string Destination, string Timestamp)> summaryRecords 
-    = new List<(string, string, string, string)>(); 
+    private static List<(string FileName, string Status, string Destination, string Timestamp, string RunId)> summaryRecords 
+    = new List<(string, string, string, string, string)>();
+    private static bool randomDelayEnabled;
+    private static int delayMin;
+    private static int delayMax;
+    private static bool dryRunEnabled=true;
+
+    private static string archiveRoot;
+
     static async Task Main(string[] args)
     {
-        Console.WriteLine("=== Car Hive PDF Processor Started ===");
         LoadConfig("config.json");
+        string runId = Guid.NewGuid().ToString();
+        Log($"=== Car Hive Automation Started | Run ID: {runId} ===");
+         // If LogFile missing, default to local
+        if (string.IsNullOrWhiteSpace(logFilePath))
+        {
+            logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "process.log");
+        }
+        EnsureFileDirectory(logFilePath);
+
 
         if (!ValidateLicense(licenseKeyFolderPath))
         {
@@ -49,7 +66,8 @@ class Program
 
         try
         {
-            Log($"[INFO] Scanning folder: {folderPath}");
+            Log($"[INFO] Run ID: {runId} | Scanning folder: {folderPath}");
+
             var pdfFiles = Directory.GetFiles(folderPath, "*.pdf");
 
             if(pdfFiles.Length ==0)
@@ -66,7 +84,7 @@ class Program
             foreach (var pdfPath in pdfFiles)
             {
                 totalFiles++;
-                Log($"[INFO] Processing file: {Path.GetFileName(pdfPath)}");
+                Log($"[INFO] Run ID: {runId} | Processing file: {Path.GetFileName(pdfPath)}");
 
                 var extractedData = ExtractKeyValuePairsFromText(pdfPath);
                 Log($"[INFO] Extracted {extractedData.Count} key-value pairs.");
@@ -81,53 +99,76 @@ class Program
                     string destPath = Path.Combine(destinationFolder, Path.GetFileName(pdfPath));
                     File.Move(pdfPath, destPath, true);
                     Log(success
-                        ? $"[SUCCESS] Submitted and moved to Processed: {Path.GetFileName(pdfPath)}"
-                        : $"[ERROR] Submission failed. Moved to Error: {Path.GetFileName(pdfPath)}");
+                        ? $"[SUCCESS] Run ID: {runId} | Submitted and moved to Processed: {Path.GetFileName(pdfPath)}"
+                        : $"[ERROR] Run ID: {runId} | Submission failed. Moved to Error: {Path.GetFileName(pdfPath)}");
 
-                    summaryRecords.Add((Path.GetFileName(pdfPath), status, destPath, timestamp));
+                    summaryRecords.Add((Path.GetFileName(pdfPath), status, destPath, timestamp, runId));
                 }
                 catch (Exception ex)
                 {
-                    Log($"[ERROR] Failed to move file {Path.GetFileName(pdfPath)}: {ex.Message}");
-                    summaryRecords.Add((Path.GetFileName(pdfPath), "MoveError", pdfPath, timestamp));
+                    Log($"[ERROR] Run ID: {runId} | Failed to move file {Path.GetFileName(pdfPath)}: {ex.Message}");
+                    summaryRecords.Add((Path.GetFileName(pdfPath), "MoveError", pdfPath, timestamp, runId));
                 }
 
                 if (success) successCount++; else failureCount++;
-
+                //Apply random delay only if enabled in config
+                if (randomDelayEnabled)
+                {
+                    Random rnd = new Random();
+                    int delayMinutes = rnd.Next(delayMin, delayMax + 1); // inclusive range
+                    Log($"[INFO] Run ID: {runId} | Waiting {delayMinutes} minutes before next submission...");
+                    await Task.Delay(TimeSpan.FromMinutes(delayMinutes));
+                }
             }
         }
         catch (Exception ex)
         {
-            Log($"[EXCEPTION] {ex.Message}");
+            Log($"[EXCEPTION] Run ID: {runId} | {ex.Message}");
             Log("[STACKTRACE] " + ex.StackTrace);
         }
         finally
         {
             stopwatch.Stop();
             Log("=== Summary Report ===");
+            Log($"Run ID: {runId}");
             Log($"Total Files Processed: {totalFiles}");
             Log($"Successful Submissions: {successCount}");
             Log($"Failed Submissions: {failureCount}");
             Log($"=== Process Completed in {stopwatch.Elapsed.TotalSeconds:F2} seconds ===");
             try
             {
+                EnsureFileDirectory(summaryFile);
                 using (var writer = new StreamWriter(summaryFile))
                 {
-                    writer.WriteLine("FileName,Status,Destination,Timestamp");
+                    writer.WriteLine("RunID,FileName,Status,Destination,Timestamp");
                     foreach (var record in summaryRecords)
                     {
-                        writer.WriteLine($"{record.FileName},{record.Status},{record.Destination},{record.Timestamp}");
+                        writer.WriteLine($"{record.RunId},{record.FileName},{record.Status},{record.Destination},{record.Timestamp}");
                     }
                 }
-                Log($"[INFO] Summary CSV written to {summaryFile}");
+                Log($"[INFO] Run ID: {runId} | Summary CSV written to {summaryFile}");
+
+                // Archive both log and summary
+                string runArchiveFolder = Path.Combine(archiveRoot, $"Run_{runId}");
+                Directory.CreateDirectory(runArchiveFolder);
+
+                string archivedLog = Path.Combine(runArchiveFolder, $"log_{runId}.txt");
+                string archivedSummary = Path.Combine(runArchiveFolder, $"summary_{runId}.csv");
+
+                File.Copy(logFilePath, archivedLog, true);
+                File.Copy(summaryFile, archivedSummary, true);
+
+
+                Log($"[INFO] Run ID: {runId} | Archived log and summary to {runArchiveFolder}");
+    
             }
             catch (Exception ex)
             {
-                Log($"[ERROR] Failed to write summary CSV: {ex.Message}");
+                Log($"[ERROR] Run ID: {runId} | Failed to write summary CSV: {ex.Message}");
             }
 
         }
-         Console.WriteLine("=== Car Hive PDF Processor Completed ===");
+         Console.WriteLine("=== Car Hive PDF Automation Completed ===");
     }
 
     static void LoadConfig(string configPath)
@@ -139,7 +180,7 @@ class Program
 
             if (doc.RootElement.TryGetProperty("LicenseKeyFolderPath", out var key))
                 licenseKeyFolderPath = key.GetString();
-            if (doc.RootElement.TryGetProperty("PDFFileFolderPath", out var folder))
+            if (doc.RootElement.TryGetProperty("FolderPath", out var folder))
                 folderPath = folder.GetString();
             if (doc.RootElement.TryGetProperty("FormUrl", out var form))
                 formUrl = form.GetString();
@@ -151,17 +192,34 @@ class Program
                 errorFolder = error.GetString();
             if (doc.RootElement.TryGetProperty("SummaryFile", out var summary))
                 summaryFile = summary.GetString();
-            if (doc.RootElement.TryGetProperty("LogFileFolderPath", out var logFilePath))
-                logFileFolderPath = logFilePath.GetString();
+           /*  if (doc.RootElement.TryGetProperty("LogFileFolderPath", out var logFilePath))
+                logFileFolderPath = logFilePath.GetString(); */
             if (doc.RootElement.TryGetProperty("UserName", out var user))
                 userName = user.GetString();
             if (doc.RootElement.TryGetProperty("Email", out var mail))
                 email = mail.GetString();
 
+            if (doc.RootElement.TryGetProperty("RandomDelay", out var delayFlag))
+                randomDelayEnabled = delayFlag.GetBoolean();
+
+            if (doc.RootElement.TryGetProperty("DelayMin", out var min))
+                delayMin = min.GetInt32();
+
+            if (doc.RootElement.TryGetProperty("DelayMax", out var max))
+                delayMax = max.GetInt32();
+            
+            if (doc.RootElement.TryGetProperty("ArchiveRoot", out var archive))
+                archiveRoot = archive.GetString();
+            
+            if (doc.RootElement.TryGetProperty("LogFile", out var logFile))
+                logFilePath = logFile.GetString();
+            if (doc.RootElement.TryGetProperty("DryRun", out var dryRunFlag))
+                dryRunEnabled = dryRunFlag.GetBoolean();
+
             Directory.CreateDirectory(processedFolder);
             Directory.CreateDirectory(errorFolder);
-            Directory.CreateDirectory(logFileFolderPath);
-
+            Directory.CreateDirectory(folderPath);
+            Directory.CreateDirectory(archiveRoot);
 
             Log("[INFO] Loaded configuration from JSON.");
         }
@@ -253,7 +311,6 @@ class Program
         }
         return result;
     }
-
     static Dictionary<string, string> ExtractKeyValuePairsFromText(string pdfPath)
     {
         // Define the keys we want to extract
@@ -390,6 +447,19 @@ class Program
 
     static async Task<bool> SubmitToGoogleForm(string postUrl, Dictionary<string, string> fieldMap, Dictionary<string, string> extractedData)
     {
+        if (dryRunEnabled)
+        {
+            Log("[INFO] Dry-run mode enabled. Skipping actual Google Form submission.");
+            foreach (var kvp in fieldMap)
+            {
+                if (extractedData.TryGetValue(kvp.Key, out var value))
+                {
+                    Log($"[DATA] {kvp.Key}: {value}");
+                }
+            }
+            return true; // treat as success for testing
+         }
+
         try
         {
             using (var client = new HttpClient())
@@ -424,11 +494,46 @@ class Program
         }
     }
 
-    static void Log(string message)
+   /*  static void Log(string message)
     {
         string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {message}";
         //Console.WriteLine(logEntry);
         File.AppendAllText($"{logFileFolderPath}\\{logFileName}", logEntry + Environment.NewLine);
+    } */
+
+    static void Log(string message)
+    {
+        string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {message}";
+        Console.WriteLine(logEntry);
+
+        try
+        {
+            File.AppendAllText(logFilePath, logEntry + Environment.NewLine);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Failed to write log file: {ex.Message}");
+        }
+    }
+
+    static void EnsureFileDirectory(string filePath)
+    {
+        try
+        {
+            var dir = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrWhiteSpace(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            if (!File.Exists(filePath))
+            {
+                File.WriteAllText(filePath, ""); // create empty file
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Failed to initialize file path {filePath}: {ex.Message}");
+        }
     }
 
     static string GetDeviceId()

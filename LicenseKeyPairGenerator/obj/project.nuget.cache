@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "OiUqlfQITtg=",
+  "dgSpecHash": "mrU9UZ5Jbj0=",
   "success": true,
-  "projectFilePath": "c:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseKeyPairGenerator\\LicenseKeyPairGenerator.csproj",
+  "projectFilePath": "C:\\Personal\\Reagan\\Work\\Projects\\Mohan\\ETL\\LicenseKeyPairGenerator\\LicenseKeyPairGenerator.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\RENIRENZO\\.nuget\\packages\\bouncycastle.cryptography\\2.4.0\\bouncycastle.cryptography.2.4.0.nupkg.sha512",
     "C:\\Users\\RENIRENZO\\.nuget\\packages\\deviceid\\6.9.0\\deviceid.6.9.0.nupkg.sha512",
