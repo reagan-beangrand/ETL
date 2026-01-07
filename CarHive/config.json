@@ -9,10 +9,10 @@
   "UserName": "NTFVIN201020",
   "Email": "mastermohan292@gmail.com",
   "ArchiveRoot": "C:\\Temp\\Archive",
-  "RandomDelay": false,
-  "DryRun": true,
-  "DelayMin": 10,
-  "DelayMax": 15,
+  "RandomDelay": true,
+  "DryRun": false,
+  "DelayMin": 3,
+  "DelayMax": 5,
   "FormUrl": "https://docs.google.com/forms/d/e/1FAIpQLScpQot1keIdFHSH8-D0XWJYXm_wX1aYBxBrjjH8NiKHZht03Q/viewform",
   "FormPostUrl": "https://docs.google.com/forms/d/e/1FAIpQLScpQot1keIdFHSH8-D0XWJYXm_wX1aYBxBrjjH8NiKHZht03Q/formResponse"
 }

@@ -38,7 +38,7 @@ class Program
     private static int delayMax;
     private static bool dryRunEnabled=true;
 
-    private static string archiveRoot;
+    private static string archiveRoot;    
 
     static async Task Main(string[] args)
     {
@@ -306,14 +306,14 @@ class Program
             {
                 //Console.WriteLine($"Page {page.Number}:");
                 //Console.WriteLine(page.Text.TrimStart());
-                result = page.Text.TrimStart();
+                result += page.Text.TrimStart();
             }
         }
         return result;
     }
     static Dictionary<string, string> ExtractKeyValuePairsFromText(string pdfPath)
     {
-        // Define the keys we want to extract
+       // Define the keys we want to extract
         string[] keysToExtract = { "Car Hive Batch Number", "Car Code", "Car Title",
                                     "Seller / Owner Name", "Address", "City", "State", "Pincode",
                                     "Contact Number","Email Address","Fuel Type","Condition",
@@ -327,14 +327,150 @@ class Program
                                      "Loan Status","Asking Price (₹)","Negotiable (Yes/No)","Description"};
         
         Dictionary<string, string> extractedValues = new Dictionary<string, string>();
-        extractedValues["User Name"]=userName;        
+        extractedValues["User Name"]=userName;                
         try
         {
             string textContent = ExtractTextFromPdf(pdfPath);            
             var parser = new CarInfoParser();
             CarInfo car = parser.Parse(textContent);
-            string generalRegEx = @":\s*(.+)";
+            List<CarInfo> cars = [car];
+
             
+
+            //string generalRegEx = @":\s*(.+)";
+            
+
+
+
+            cars.ForEach(c =>
+            {                
+                string carHiveBatchNumber =keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(carHiveBatchNumber,keysToExtract);
+                extractedValues[carHiveBatchNumber] = GetKeyValue(c.CarHiveBatchNumber, ExtractFirstMatchedValue(c.CarHiveBatchNumber, keysToExtract));
+                string carCode =keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(carCode,keysToExtract);
+                extractedValues[carCode] = GetKeyValue(c.CarCode, ExtractFirstMatchedValue(c.CarCode, keysToExtract));
+                string carTitle =keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(carTitle,keysToExtract);
+                extractedValues[carTitle] = GetKeyValue(c.CarTitle, ExtractFirstMatchedValue(c.CarTitle, keysToExtract));
+                string sellerOwnerName = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(sellerOwnerName,keysToExtract);
+                extractedValues[sellerOwnerName] = GetKeyValue(car.SellerOwnerName, ExtractFirstMatchedValue(c.SellerOwnerName, keysToExtract));
+                string address = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(address,keysToExtract);
+                extractedValues[address] = GetKeyValue(c.Address, ExtractFirstMatchedValue(c.Address, keysToExtract));
+                string city = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(city,keysToExtract);
+                extractedValues[city] = GetKeyValue(c.City, ExtractFirstMatchedValue(c.City, keysToExtract));
+                string state = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(state,keysToExtract);
+                extractedValues[state] = GetKeyValue(c.State, ExtractFirstMatchedValue(c.State, keysToExtract));
+                string pincode = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(pincode,keysToExtract);
+                extractedValues[pincode] = c.Pincode;//GetKeyValue(c.Pincode, ExtractFirstMatchedValue(c.Pincode, keysToExtract));
+                string contactNumber = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(contactNumber,keysToExtract);
+                extractedValues[contactNumber] = c.ContactNumber;//GetKeyValue(c.ContactNumber, ExtractFirstMatchedValue(c.ContactNumber, keysToExtract));
+                string emailAddress = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(emailAddress,keysToExtract);
+                extractedValues[emailAddress] = c.EmailAddress;//GetKeyValue(c.EmailAddress, ExtractFirstMatchedValue(c.EmailAddress, keysToExtract));
+                string fuelType = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(fuelType,keysToExtract);
+                extractedValues[fuelType] = GetKeyValue(c.FuelType, ExtractFirstMatchedValue(c.FuelType, keysToExtract));
+                string condition = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(condition,keysToExtract);
+                extractedValues[condition] = GetKeyValue(c.Condition, ExtractFirstMatchedValue(c.Condition, keysToExtract));
+                string yearOfProduction = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(yearOfProduction,keysToExtract);
+                extractedValues[yearOfProduction] = c.YearOfProduction;//GetKeyValue(c.YearOfProduction, ExtractFirstMatchedValue(c.YearOfProduction, keysToExtract));
+                string yearOfManufacturing = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(yearOfManufacturing,keysToExtract);
+                extractedValues[yearOfManufacturing] = c.YearOfManufacturing;
+                string bodyType = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(bodyType,keysToExtract);
+                extractedValues[bodyType] = GetKeyValue(c.BodyType, ExtractFirstMatchedValue(c.BodyType, keysToExtract));
+                string mileage = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(mileage,keysToExtract);
+                extractedValues[mileage] =  c.Mileage+ " km";
+                string transmission = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(transmission,keysToExtract);
+                extractedValues[transmission] =  c.Transmission;
+                string engineCapacity = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(engineCapacity,keysToExtract);
+                extractedValues[engineCapacity] =  c.EngineCapacity + " cc";
+                string color = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(color,keysToExtract);
+                extractedValues[color] = GetKeyValue(c.Color, ExtractFirstMatchedValue(c.Color, keysToExtract));
+                string colorCode = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(colorCode,keysToExtract);
+                extractedValues[colorCode] = GetKeyValue(c.ColorCode, ExtractFirstMatchedValue(c.ColorCode, keysToExtract));
+                string numberOfOwners = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(numberOfOwners,keysToExtract);
+                extractedValues[numberOfOwners] = c.NumberOfOwners;
+                string registrationCity = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(registrationCity,keysToExtract);
+                extractedValues[registrationCity] = GetKeyValue(c.RegistrationCity, ExtractFirstMatchedValue(c.RegistrationCity, keysToExtract));
+                string registrationNumber = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(registrationNumber,keysToExtract);
+                extractedValues[registrationNumber] = GetKeyValue(c.RegistrationNumber, ExtractFirstMatchedValue(c.RegistrationNumber, keysToExtract));
+                string VIN = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(VIN,keysToExtract);
+                extractedValues[VIN] = GetKeyValue(c.VIN, ExtractFirstMatchedValue(c.VIN, keysToExtract));
+                string chassisNumber = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(chassisNumber,keysToExtract);
+                extractedValues[chassisNumber] = GetKeyValue(c.ChassisNumber, ExtractFirstMatchedValue(c.ChassisNumber, keysToExtract));
+                string insuranceValidity = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(insuranceValidity,keysToExtract);
+                extractedValues[insuranceValidity] = GetKeyValue(c.InsuranceValidity, ExtractFirstMatchedValue(c.InsuranceValidity, keysToExtract));
+                string rcStatus = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(rcStatus,keysToExtract);
+                extractedValues[rcStatus] = GetKeyValue(c.RCStatus, ExtractFirstMatchedValue(c.RCStatus, keysToExtract));
+                string serviceHistory = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(serviceHistory,keysToExtract);
+                extractedValues[serviceHistory] = GetKeyValue(c.ServiceHistory, ExtractFirstMatchedValue(c.ServiceHistory, keysToExtract));
+                string lastServiceDate = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(lastServiceDate,keysToExtract);
+                extractedValues[lastServiceDate] = GetKeyValue(c.LastServiceDate, ExtractFirstMatchedValue(c.LastServiceDate, keysToExtract));
+                string serviceCenterHistory = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(serviceCenterHistory,keysToExtract);
+                extractedValues[serviceCenterHistory] = GetKeyValue(c.ServiceCenterHistory, ExtractFirstMatchedValue(c.ServiceCenterHistory, keysToExtract));
+                string warrantyStatus = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(warrantyStatus,keysToExtract);
+                extractedValues[warrantyStatus] = GetKeyValue(c.WarrantyStatus, ExtractFirstMatchedValue(c.WarrantyStatus, keysToExtract));
+                string featureHighlights = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(featureHighlights,keysToExtract);
+                extractedValues[featureHighlights] = GetKeyValue(c.FeatureHighlights, ExtractFirstMatchedValue(c.FeatureHighlights, keysToExtract));
+                string carAccessories = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(carAccessories,keysToExtract);
+                extractedValues[carAccessories] = GetKeyValue(c.CarAccessories, ExtractFirstMatchedValue(c.CarAccessories, keysToExtract));
+                string fuelEfficiency = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(fuelEfficiency,keysToExtract);
+                extractedValues[fuelEfficiency] = c.FuelEfficiency+" km/l";//GetKeyValue(car.FuelEfficiency, ExtractFirstMatchedValue(c.FuelEfficiency, keysToExtract)) + " km/l";
+                string tyreCondition = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(tyreCondition,keysToExtract);
+                extractedValues[tyreCondition] = GetKeyValue(c.TyreCondition, ExtractFirstMatchedValue(c.TyreCondition, keysToExtract));
+                string interiorCondition = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(interiorCondition,keysToExtract);
+                extractedValues[interiorCondition] = GetKeyValue(c.InteriorCondition, ExtractFirstMatchedValue(c.InteriorCondition, keysToExtract));
+                string exteriorCondition = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(exteriorCondition,keysToExtract);
+                extractedValues[exteriorCondition] = GetKeyValue(c.ExteriorCondition, ExtractFirstMatchedValue(c.ExteriorCondition, keysToExtract));
+                string roadTaxPaid = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(roadTaxPaid,keysToExtract);
+                extractedValues[roadTaxPaid] = GetKeyValue(c.RoadTaxPaid, ExtractFirstMatchedValue(c.RoadTaxPaid, keysToExtract));
+                string loanStatus = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(loanStatus,keysToExtract);
+                extractedValues[loanStatus] = GetKeyValue(c.LoanStatus, ExtractFirstMatchedValue(c.LoanStatus, keysToExtract));
+                string askingPrice = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(askingPrice,keysToExtract);
+                extractedValues[askingPrice] = c.AskingPrice;//GetKeyValue(car.AskingPrice, ExtractFirstMatchedValue(c.AskingPrice, keysToExtract));
+                string negotiable = keysToExtract[0];
+                keysToExtract = RemoveKeyToExtract(negotiable,keysToExtract);
+                extractedValues[negotiable] = c.Negotiable;//GetKeyValue(car.Negotiable, ExtractFirstMatchedValue(c.Negotiable, keysToExtract));
+                string description = keysToExtract[0];
+                extractedValues[description] = c.Description;//GetKeyValue(car.Description, ExtractFirstMatchedValue(c.Description, keysToExtract));
+            });
+            /* 
             int keysCount = keysToExtract.Length;
             for (int i = 0; i < keysCount; i++)
             {
@@ -358,10 +494,14 @@ class Program
                     var extractedValue = match.Groups[1].Value.Trim();
                     if(string.Equals(keysToExtract[i],"Description",StringComparison.OrdinalIgnoreCase))                        
                         extractedValues[keysToExtract[i]] = extractedValue;
-                    else                
-                        extractedValues[keysToExtract[i]]= GetKeyValue(extractedValue, $"{keysToExtract[i+1]}:");
-                }  
-            }            
+                    else
+                    {
+                         string marker = ExtractFirstMatchedValue(car.CarHiveBatchNumber,keysToExtract);
+                        //extractedValues[keysToExtract[i]]= GetKeyValue(extractedValue, $"{keysToExtract[i+1]}:");
+                        extractedValues[keysToExtract[i]]= GetKeyValue(car.CarHiveBatchNumber, marker);
+                    } 
+                }
+            }             */
             //Print results
             foreach (var kvp in extractedValues)
             {
@@ -376,19 +516,69 @@ class Program
         return extractedValues;
     }
 
+    private static string[] RemoveKeyToExtract(string keyToRemove,string[] keysToExtract)
+    {
+        // Create a new array that excludes the value
+        List<string> stringList = new List<string>(keysToExtract);
+
+        // Remove the first occurrence of "Banana"
+        stringList.Remove(keyToRemove); 
+
+        // If needed, convert back to an array
+        keysToExtract = stringList.ToArray(); 
+
+        //keysToExtract = keysToExtract.Where(value => value != keysToExtract[0]).ToArray();
+        return keysToExtract;
+    }
+
     private static string GetKeyValue(string inputText, string marker)
     {
-        int index = inputText.IndexOf(marker);
         string beforeText = "";
-        if (index != -1)
+        if(!string.IsNullOrWhiteSpace(marker))
+        {
+            int index = inputText.IndexOf(marker);            
+            if (index != -1)
+                beforeText = inputText.Substring(0, index).Trim();
+            else
+                Log($"[ERROR] Marker not found in text: {marker}");
+        }
+        else
+            Log($"[ERROR] Marker is null or empty.");
+            //Console.WriteLine("Marker not found in text.");        
+        return beforeText;
+    }
+
+    private static string GetMakerValue(string inputText, string[] keysToExtract)
+    {
+        
+        //int index = inputText.IndexOf(marker);
+        string beforeText = "";
+        /* if (index != -1)
             beforeText = inputText.Substring(0, index).Trim();
         else
         {
             Log($"[ERROR] Marker not found in text: {marker}");
             //Console.WriteLine("Marker not found in text.");
-        }
+        } */
         return beforeText;
     }
+
+    static string ExtractFirstMatchedValue(string input, string[] keys)
+    {
+        foreach (var key in keys)
+        {
+            // Regex to match "Key: Value"
+            string pattern = $@"{Regex.Escape(key)}\s*:\s*(.+?)(?=\r?\n|$)";
+            var match = Regex.Match(input, pattern, RegexOptions.IgnoreCase);
+
+            if (match.Success)
+            {
+                return key;//return $"{key}: {match.Groups[1].Value.Trim()}";
+            }
+        }
+        return null;
+    }
+
   
     static async Task<Dictionary<string, string>> GetGoogleFormFields(string formUrl)
     {
@@ -473,11 +663,11 @@ class Program
                         Log($"[DATA] {kvp.Key}: {extractedData[kvp.Key]}");
                     }
                 }
-                formData["emailAddress"] = email;
+                formData["emailAddress"] = email;                
                 foreach (var kvp in formData)
                 {
                     Log($"{kvp.Key} -> {kvp.Value}");
-                    //Console.WriteLine($"{kvp.Key} -> {kvp.Value}");
+                    Console.WriteLine($"{kvp.Key} -> {kvp.Value}");
                 }
 
                 var content = new FormUrlEncodedContent(formData);
@@ -505,7 +695,6 @@ class Program
     {
         string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {message}";
         Console.WriteLine(logEntry);
-
         try
         {
             File.AppendAllText(logFilePath, logEntry + Environment.NewLine);
