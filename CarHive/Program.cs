@@ -152,7 +152,7 @@ class Program
                     foreach (DataRow row in table.Rows)
                     {
                         var extractedData = new Dictionary<string, string>();
-
+                        extractedData["User Name"] = userName;
                         foreach (DataColumn col in table.Columns)
                         {
                             string key = col.ColumnName;
@@ -160,6 +160,12 @@ class Program
                             extractedData[key] = value;
                         }  
                         Log($"[INFO] Extracted {extractedData.Count} key-value pairs.");
+                         //Print results
+                        foreach (var kvp in extractedData)
+                        {
+                            Log($"[Excel] {kvp.Key} -> {kvp.Value}");
+                            //Console.WriteLine($"{kvp.Key} -> {kvp.Value}");
+                        }
                         var success = await SubmitToGoogleForm(formPostUrl, fieldMap, extractedData);
                         if (success) successCount++; else failureCount++;
                         //Apply random delay only if enabled in config
@@ -792,7 +798,7 @@ class Program
     {
         if (dryRunEnabled)
         {
-            Log("[INFO] Dry-run mode enabled. Skipping actual Google Form submission.");
+            Log("[INFO] Dry-run mode enabled. Skipping actual Google Form submission.");            
             foreach (var kvp in fieldMap)
             {
                 if (extractedData.TryGetValue(kvp.Key, out var value))
