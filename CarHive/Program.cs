@@ -13,6 +13,8 @@ using Standard.Licensing;
 using Standard.Licensing.Validation;
 using DeviceId;
 using Microsoft.IdentityModel.Tokens;
+using ExcelDataReader;
+using System.Data;
 
 class Program
 {
@@ -37,6 +39,7 @@ class Program
     private static int delayMin;
     private static int delayMax;
     private static bool dryRunEnabled=true;
+    private static string fileExtFormat;
 
     private static string archiveRoot;    
 
@@ -68,58 +71,132 @@ class Program
         {
             Log($"[INFO] Run ID: {runId} | Scanning folder: {folderPath}");
 
-            var pdfFiles = Directory.GetFiles(folderPath, "*.pdf");
-
-            if(pdfFiles.Length ==0)
+            if(string.Compare(fileExtFormat,"pdf",true)==0)
             {
-                Log("[INFO] No PDF files found to process.");
-                return;
+                var pdfFiles = Directory.GetFiles(folderPath, "*.pdf");
+
+                if(pdfFiles.Length ==0)
+                {
+                    Log("[INFO] No PDF files found to process.");
+                    return;
+                }
+                Log($"[INFO] Found {pdfFiles.Length} PDF files.");
+
+                var fieldMap = await GetGoogleFormFields(formUrl);
+                Log($"[INFO] Found {fieldMap.Count} form fields.");          
+
+            
+                foreach (var pdfPath in pdfFiles)
+                {
+                    totalFiles++;
+                    Log($"[INFO] Run ID: {runId} | Processing file: {Path.GetFileName(pdfPath)}");
+
+                    var extractedData = ExtractKeyValuePairsFromText(pdfPath);
+                    Log($"[INFO] Extracted {extractedData.Count} key-value pairs.");
+
+                    var success = await SubmitToGoogleForm(formPostUrl, fieldMap, extractedData);
+                    string destinationFolder = success ? processedFolder : errorFolder;
+                    string status = success ? "Success" : "Failed";
+                    string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                    try
+                    {
+                        string destPath = Path.Combine(destinationFolder, Path.GetFileName(pdfPath));
+                        File.Move(pdfPath, destPath, true);
+                        Log(success
+                            ? $"[SUCCESS] Run ID: {runId} | Submitted and moved to Processed: {Path.GetFileName(pdfPath)}"
+                            : $"[ERROR] Run ID: {runId} | Submission failed. Moved to Error: {Path.GetFileName(pdfPath)}");
+
+                        summaryRecords.Add((Path.GetFileName(pdfPath), status, destPath, timestamp, runId));
+                    }
+                    catch (Exception ex)
+                    {
+                        Log($"[ERROR] Run ID: {runId} | Failed to move file {Path.GetFileName(pdfPath)}: {ex.Message}");
+                        summaryRecords.Add((Path.GetFileName(pdfPath), "MoveError", pdfPath, timestamp, runId));
+                    }
+
+                    if (success) successCount++; else failureCount++;
+                    //Apply random delay only if enabled in config
+                    if (randomDelayEnabled)
+                    {
+                        Random rnd = new Random();
+                        int delayMinutes = rnd.Next(delayMin, delayMax + 1); // inclusive range
+                        Log($"[INFO] Run ID: {runId} | Waiting {delayMinutes} minutes before next submission...");
+                        await Task.Delay(TimeSpan.FromMinutes(delayMinutes));
+                    }
+                }
             }
-            Log($"[INFO] Found {pdfFiles.Length} PDF files.");
-
-            var fieldMap = await GetGoogleFormFields(formUrl);
-            Log($"[INFO] Found {fieldMap.Count} form fields.");          
-
-         
-            foreach (var pdfPath in pdfFiles)
+            else if(string.Compare(fileExtFormat,"excel",true)==0)
             {
-                totalFiles++;
-                Log($"[INFO] Run ID: {runId} | Processing file: {Path.GetFileName(pdfPath)}");
+                var excelFiles = Directory.GetFiles(folderPath, "*.xlsx");
 
-                var extractedData = ExtractKeyValuePairsFromText(pdfPath);
-                Log($"[INFO] Extracted {extractedData.Count} key-value pairs.");
-
-                var success = await SubmitToGoogleForm(formPostUrl, fieldMap, extractedData);
-                string destinationFolder = success ? processedFolder : errorFolder;
-                string status = success ? "Success" : "Failed";
-                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-                try
+                if(excelFiles.Length ==0)
                 {
-                    string destPath = Path.Combine(destinationFolder, Path.GetFileName(pdfPath));
-                    File.Move(pdfPath, destPath, true);
-                    Log(success
-                        ? $"[SUCCESS] Run ID: {runId} | Submitted and moved to Processed: {Path.GetFileName(pdfPath)}"
-                        : $"[ERROR] Run ID: {runId} | Submission failed. Moved to Error: {Path.GetFileName(pdfPath)}");
+                    Log("[INFO] No Excel files found to process.");
+                    return;
+                }
+                Log($"[INFO] Found {excelFiles.Length} Excel files.");
 
-                    summaryRecords.Add((Path.GetFileName(pdfPath), status, destPath, timestamp, runId));
-                }
-                catch (Exception ex)
-                {
-                    Log($"[ERROR] Run ID: {runId} | Failed to move file {Path.GetFileName(pdfPath)}: {ex.Message}");
-                    summaryRecords.Add((Path.GetFileName(pdfPath), "MoveError", pdfPath, timestamp, runId));
-                }
+                var fieldMap = await GetGoogleFormFields(formUrl);
+                Log($"[INFO] Found {fieldMap.Count} form fields.");          
 
-                if (success) successCount++; else failureCount++;
-                //Apply random delay only if enabled in config
-                if (randomDelayEnabled)
+            
+                foreach (var file in excelFiles)
                 {
-                    Random rnd = new Random();
-                    int delayMinutes = rnd.Next(delayMin, delayMax + 1); // inclusive range
-                    Log($"[INFO] Run ID: {runId} | Waiting {delayMinutes} minutes before next submission...");
-                    await Task.Delay(TimeSpan.FromMinutes(delayMinutes));
+                    totalFiles++;
+                    Log($"[INFO] Run ID: {runId} | Processing file: {Path.GetFileName(file)}");
+
+
+                    var table = GetExcelRecords(file);
+
+                    foreach (DataRow row in table.Rows)
+                    {
+                        var extractedData = new Dictionary<string, string>();
+
+                        foreach (DataColumn col in table.Columns)
+                        {
+                            string key = col.ColumnName;
+                            string value = row[col]?.ToString() ?? string.Empty;
+                            extractedData[key] = value;
+                        }  
+                        Log($"[INFO] Extracted {extractedData.Count} key-value pairs.");
+                        var success = await SubmitToGoogleForm(formPostUrl, fieldMap, extractedData);
+                        if (success) successCount++; else failureCount++;
+                        //Apply random delay only if enabled in config
+                        if (randomDelayEnabled)
+                        {
+                            Random rnd = new Random();
+                            int delayMinutes = rnd.Next(delayMin, delayMax + 1); // inclusive range
+                            Log($"[INFO] Run ID: {runId} | Waiting {delayMinutes} minutes before next submission...");
+                            await Task.Delay(TimeSpan.FromMinutes(delayMinutes));
+                        }                 
+                    }
+                    bool successfullySubmitted=false;
+                    if(successCount >0)
+                        successfullySubmitted=true;
+                    else if(failureCount >0)
+                        successfullySubmitted=false;
+                    string destinationFolder = successfullySubmitted ? processedFolder : errorFolder;
+                    string status = successfullySubmitted ? "Success" : "Failed";
+                    string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                    try
+                    {
+                        string destPath = Path.Combine(destinationFolder, Path.GetFileName(file));
+                        File.Move(file, destPath, true);
+                        Log(successfullySubmitted
+                            ? $"[SUCCESS] Run ID: {runId} | Submitted and moved to Processed: {Path.GetFileName(file)}"
+                            : $"[ERROR] Run ID: {runId} | Submission failed. Moved to Error: {Path.GetFileName(file)}");
+
+                        summaryRecords.Add((Path.GetFileName(file), status, destPath, timestamp, runId));
+                    }
+                    catch (Exception ex)
+                    {
+                        Log($"[ERROR] Run ID: {runId} | Failed to move file {Path.GetFileName(file)}: {ex.Message}");
+                        summaryRecords.Add((Path.GetFileName(file), "MoveError", file, timestamp, runId));
+                    }
                 }
-            }
+            }            
         }
         catch (Exception ex)
         {
@@ -198,23 +275,20 @@ class Program
                 userName = user.GetString();
             if (doc.RootElement.TryGetProperty("Email", out var mail))
                 email = mail.GetString();
-
             if (doc.RootElement.TryGetProperty("RandomDelay", out var delayFlag))
                 randomDelayEnabled = delayFlag.GetBoolean();
-
             if (doc.RootElement.TryGetProperty("DelayMin", out var min))
                 delayMin = min.GetInt32();
-
             if (doc.RootElement.TryGetProperty("DelayMax", out var max))
-                delayMax = max.GetInt32();
-            
+                delayMax = max.GetInt32();            
             if (doc.RootElement.TryGetProperty("ArchiveRoot", out var archive))
-                archiveRoot = archive.GetString();
-            
+                archiveRoot = archive.GetString();            
             if (doc.RootElement.TryGetProperty("LogFile", out var logFile))
                 logFilePath = logFile.GetString();
             if (doc.RootElement.TryGetProperty("DryRun", out var dryRunFlag))
                 dryRunEnabled = dryRunFlag.GetBoolean();
+            if (doc.RootElement.TryGetProperty("FileFormat", out var fileFormat))
+                fileExtFormat = fileFormat.GetString();
 
             Directory.CreateDirectory(processedFolder);
             Directory.CreateDirectory(errorFolder);
@@ -310,6 +384,85 @@ class Program
             }
         }
         return result;
+    }
+
+    static Dictionary<string, string> ExtractKeyValuePairsFromExcel(string excelPath)
+    {
+        Dictionary<string, string> extractedValues = new Dictionary<string, string>();
+        try
+        {
+           // Required for ExcelDataReader to support .xlsx
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            using var stream = File.Open(excelPath, FileMode.Open, FileAccess.Read);
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+
+            var result = reader.AsDataSet(new ExcelDataSetConfiguration()
+            {
+                ConfigureDataTable = _ => new ExcelDataTableConfiguration()
+                {
+                    UseHeaderRow = true // First row is header
+                }
+            });
+
+            DataTable table = result.Tables[0];
+
+            Console.WriteLine("=== Dictionary Output ===");
+
+            foreach (DataRow row in table.Rows)
+            {
+                //var dict = new Dictionary<string, string>();
+
+                foreach (DataColumn col in table.Columns)
+                {
+                    string key = col.ColumnName;
+                    string value = row[col]?.ToString() ?? string.Empty;
+                    extractedValues[key] = value;
+                }
+
+                // Print dictionary for this row
+                Console.WriteLine("Car Entry:");
+                foreach (var kvp in extractedValues)
+                {
+                    Console.WriteLine($"{kvp.Key} => {kvp.Value}");
+                }
+                Console.WriteLine("----------------------------");
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Log($"[ERROR] Failed to extract data from Excel file {excelPath}: {ex.Message}");
+        }
+
+        return extractedValues;
+    }
+
+    static DataTable GetExcelRecords(string excelPath)
+    {
+        DataTable dataTable=null;
+        try
+        {
+           // Required for ExcelDataReader to support .xlsx
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            using var stream = File.Open(excelPath, FileMode.Open, FileAccess.Read);
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+
+            var result = reader.AsDataSet(new ExcelDataSetConfiguration()
+            {
+                ConfigureDataTable = _ => new ExcelDataTableConfiguration()
+                {
+                    UseHeaderRow = true // First row is header
+                }
+            });
+            dataTable = result.Tables[0];
+        }
+        catch (Exception ex)
+        {
+            Log($"[ERROR] Failed to extract data from Excel file {excelPath}: {ex.Message}");
+        } 
+        return dataTable;      
     }
     static Dictionary<string, string> ExtractKeyValuePairsFromText(string pdfPath)
     {

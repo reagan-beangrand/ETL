@@ -21,7 +21,7 @@ namespace LicenseGenerator
             try
             {
                 Console.WriteLine("License file generation started!");
-                DateTime expiryDate = DateTime.UtcNow.Date.AddDays(15);
+                DateTime expiryDate = DateTime.UtcNow.Date.AddDays(30);
                 string deviceIdentifier = GetDeviceId();
                 string privateKey="";
                 string customerName = "Mohan";string passPhrase="BatchProcessor";
@@ -33,7 +33,7 @@ namespace LicenseGenerator
 
                 License newLicense = License.New()
                 .WithUniqueIdentifier(Guid.NewGuid())
-                .As(LicenseType.Trial)
+                .As(LicenseType.Standard)
                 .ExpiresAt(expiryDate)
                 .WithAdditionalAttributes(new Dictionary<string, string>
                 {
