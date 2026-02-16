@@ -6,7 +6,8 @@
   "SummaryFile": "C:\\Temp\\summary.csv",
   "LogFileFolderPath": "C:\\Temp\\Log",
   "LogFile": "C:\\Temp\\process.log",
-  "UserName": "NTFVIN201020",
+  "UserName": "NTFVIN20102",
+  "UserName-new": "NTFVIN202001",
   "Email": "mastermohan292@gmail.com",
   "ArchiveRoot": "C:\\Temp\\Archive",
   "FileFormat": "excel",
@@ -14,6 +15,8 @@
   "DryRun": true,
   "DelayMin": 3,
   "DelayMax": 5,
+  "FormUrl-new": "https://docs.google.com/forms/d/e/1FAIpQLScWvD8UX-qjQUDVu2eOexfYJ22rZi1aIE0SYl7xfAEjOj9Q_g/viewform",
+  "FormPostUrl-new": "https://docs.google.com/forms/d/e/1FAIpQLScWvD8UX-qjQUDVu2eOexfYJ22rZi1aIE0SYl7xfAEjOj9Q_g/formResponse",
   "FormUrl": "https://docs.google.com/forms/d/e/1FAIpQLScpQot1keIdFHSH8-D0XWJYXm_wX1aYBxBrjjH8NiKHZht03Q/viewform",
   "FormPostUrl": "https://docs.google.com/forms/d/e/1FAIpQLScpQot1keIdFHSH8-D0XWJYXm_wX1aYBxBrjjH8NiKHZht03Q/formResponse"
 }

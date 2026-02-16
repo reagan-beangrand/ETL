@@ -68,34 +68,37 @@ namespace GoogleFormsToolkitLibrary
                 // Load the Question Field data
                 var questionTextValue = field[1]; // Get Question Text
                 var questionText = questionTextValue.ToObject<string>();
-
-                var questionTypeCodeValue = field[3].ToObject<int>(); // Get Question Type Code   
-                var isRecognizedFieldType = Enum.TryParse(questionTypeCodeValue.ToString(),
-                                                out GoogleFormsFieldTypeEnum questionTypeEnum);
-
-                var answerOptionsList = new List<string>();
-                var answerOptionsListValue = field[4][0][1].ToList(); // Get Answers List
-                // List of Answers Available
-                if (answerOptionsListValue.Count > 0)
+                if(!string.Equals(questionText, "Untitled section", StringComparison.OrdinalIgnoreCase))
                 {
-                    foreach (var answerOption in answerOptionsListValue)
+                    var questionTypeCodeValue = field[3].ToObject<int>(); // Get Question Type Code   
+                    var isRecognizedFieldType = Enum.TryParse(questionTypeCodeValue.ToString(),
+                                                    out GoogleFormsFieldTypeEnum questionTypeEnum);
+
+                    var answerOptionsList = new List<string>();
+                    var answerOptionsListValue = field[4][0][1].ToList(); // Get Answers List
+                    // List of Answers Available
+                    if (answerOptionsListValue.Count > 0)
                     {
-                        answerOptionsList.Add(answerOption[0].ToString());
+                        foreach (var answerOption in answerOptionsListValue)
+                        {
+                            answerOptionsList.Add(answerOption[0].ToString());
+                        }
                     }
-                }
 
-                var answerSubmitIdValue = field[4][0][0]; // Get Answer Submit Id
-                var isAnswerRequiredValue = field[4][0][2]; // Get if Answer is Required to be Submitted
-                var answerSubmissionId = answerSubmitIdValue.ToObject<string>();
-                var isAnswerRequired = isAnswerRequiredValue.ToObject<int>() == 1 ? true : false; // 1 or 0
+                    var answerSubmitIdValue = field[4][0][0]; // Get Answer Submit Id
+                    var isAnswerRequiredValue = field[4][0][2]; // Get if Answer is Required to be Submitted
+                    var answerSubmissionId = answerSubmitIdValue.ToObject<string>();
+                    var isAnswerRequired = isAnswerRequiredValue.ToObject<int>() == 1 ? true : false; // 1 or 0
 
-                googleFormField.QuestionText = questionText;
-                googleFormField.QuestionType = questionTypeEnum;
-                googleFormField.AnswerOptionList = answerOptionsList;
-                googleFormField.AnswerSubmissionId = answerSubmissionId;
-                googleFormField.IsAnswerRequired = isAnswerRequired;
+                    googleFormField.QuestionText = questionText;
+                    googleFormField.QuestionType = questionTypeEnum;
+                    googleFormField.AnswerOptionList = answerOptionsList;
+                    googleFormField.AnswerSubmissionId = answerSubmissionId;
+                    googleFormField.IsAnswerRequired = isAnswerRequired;
 
-                googleForm.QuestionFieldList.Add(googleFormField);
+                    googleForm.QuestionFieldList.Add(googleFormField);
+                }                  
+                
             }
 
             return googleForm;
